@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { HEROES } from './models/mock-.heroes';
 
 @Component({
   selector: 'app-root',
