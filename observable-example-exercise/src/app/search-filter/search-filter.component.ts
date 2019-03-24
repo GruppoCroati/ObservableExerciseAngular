@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { fromEvent, Subscription } from 'rxjs';
-import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators'
+import { fromEvent, Subscription, throwError, of } from 'rxjs';
+import { map, distinctUntilChanged, debounceTime, catchError } from 'rxjs/operators'
 
 @Component({
   selector: 'app-search-filter',
@@ -20,10 +20,16 @@ export class SearchFilterComponent implements OnInit, OnDestroy {
   ngOnInit() {
     var input$ = fromEvent(this.filterBar.nativeElement, 'keyup')
 
+    var error$ = throwError("This is an error!")
+
     var subscription = input$.
                       pipe(debounceTime(200),
                       map((inputEvent: any) => inputEvent.target.value),
-                      distinctUntilChanged()). 
+                      distinctUntilChanged(),
+                      catchError(err => {
+                        console.log('With catchError: ', err)
+                        return of([])
+                      })). 
                       subscribe(inputString => this.stringToSearch.emit(inputString))
   }
 
