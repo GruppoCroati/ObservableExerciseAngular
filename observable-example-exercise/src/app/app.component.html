@@ -7,7 +7,7 @@
 </div>
 <div style="margin: auto; width: 20%">
   <h2>Filter your favourite hero:</h2>
-  <app-search-filter></app-search-filter>
+  <app-search-filter (stringToSearch)="filteredHeroesBySearch($event)"></app-search-filter>
   <ul>
     <li *ngFor="let hero of heroes">
     {{hero}}
