@@ -1,13 +1,13 @@
-import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
-import { fromEvent } from 'rxjs';
-import { map } from 'rxjs/operators'
+import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { fromEvent, Subscription } from 'rxjs';
+import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators'
 
 @Component({
   selector: 'app-search-filter',
   templateUrl: './search-filter.component.html',
   styleUrls: ['./search-filter.component.css']
 })
-export class SearchFilterComponent implements OnInit {
+export class SearchFilterComponent implements OnInit, OnDestroy {
 
   constructor() { }
 
@@ -15,12 +15,20 @@ export class SearchFilterComponent implements OnInit {
 
   @Output() stringToSearch = new EventEmitter();
 
+  subscription: Subscription
+
   ngOnInit() {
     var input$ = fromEvent(this.filterBar.nativeElement, 'keyup')
 
     var subscription = input$.
-                      pipe(map((inputEvent: any) => inputEvent.target.value)). 
+                      pipe(debounceTime(200),
+                      map((inputEvent: any) => inputEvent.target.value),
+                      distinctUntilChanged()). 
                       subscribe(inputString => this.stringToSearch.emit(inputString))
   }
 
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();  
+  }
 }
