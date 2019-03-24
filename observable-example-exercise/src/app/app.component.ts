@@ -8,4 +8,6 @@ import { HEROES } from './models/mock-.heroes';
 })
 export class AppComponent {
   title = 'observable-example-exercise';
+
+  heroes: string[] = HEROES
 }
